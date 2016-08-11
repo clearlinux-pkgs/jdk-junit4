@@ -1,0 +1,35 @@
+
+# InaccessibleBaseClassTest fails with Java 8
+sed -i /InaccessibleBaseClassTest/d src/test/java/org/junit/tests/AllTests.java
+
+python3 /usr/share/java-utils/pom_editor.py pom_remove_plugin  :replacer
+
+sed s/@version@/4.12/ src/main/java/junit/runner/Version.java.template >src/main/java/junit/runner/Version.java
+
+python3 /usr/share/java-utils/pom_editor.py pom_remove_plugin  :animal-sniffer-maven-plugin
+
+
+# Removing hamcrest source jar references (not available and/or necessary)
+python3 /usr/share/java-utils/pom_editor.py pom_remove_plugin  :maven-javadoc-plugin
+
+
+# Add proper Apache Felix Bundle Plugin instructions
+# so that we get a reasonable OSGi manifest.
+python3 /usr/share/java-utils/pom_editor.py pom_xpath_inject   pom:project "<packaging>bundle</packaging>"
+
+python3 /usr/share/java-utils/pom_editor.py pom_xpath_inject   pom:build/pom:plugins "
+
+<plugin>
+<groupId>org.apache.felix</groupId>
+<artifactId>maven-bundle-plugin</artifactId>
+<extensions>true</extensions>
+<configuration>
+<instructions>
+<Bundle-SymbolicName>org.junit</Bundle-SymbolicName>
+<Export-Package>{local-packages},!org.hamcrest*,*;x-internal:=true</Export-Package>
+<_nouses>true</_nouses>
+</instructions>
+</configuration>
+</plugin>"
+
+python3 /usr/share/java-utils/mvn_file.py : junit
