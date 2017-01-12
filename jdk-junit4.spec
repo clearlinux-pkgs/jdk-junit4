@@ -4,7 +4,7 @@
 #
 Name     : jdk-junit4
 Version  : 4.12
-Release  : 6
+Release  : 7
 URL      : https://github.com/junit-team/junit4/archive/r4.12.tar.gz
 Source0  : https://github.com/junit-team/junit4/archive/r4.12.tar.gz
 Summary  : No detailed summary available
